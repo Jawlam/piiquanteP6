@@ -1,9 +1,9 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-
 const express = require('express');
 const mongoose = require('mongoose');
+
+
+
+
 //const bodyParser = require('body-parser');
 const path = require('path'); // Donne accès au système de fichier
 
@@ -13,7 +13,7 @@ const userRoutes = require("./routes/user");
 
 mongoose
   .connect(
-    "",
+    "mongodb+srv://jaouad:Azertyuiop1@cluster0.r9h0p.mongodb.net/",
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
