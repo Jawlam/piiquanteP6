@@ -10,12 +10,13 @@ const path = require('path'); // Donne accès au système de fichier
 
 const sauceRoutes = require("./routes/sauce");
 const userRoutes = require("./routes/user");
+require('dotenv').config();
 
 mongoose
-  .connect(
-    "mongodb+srv://jaouad:Azertyuiop1@cluster0.r9h0p.mongodb.net/",
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+.connect(process.env.SECRET_DB, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
 
