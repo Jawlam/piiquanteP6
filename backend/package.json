@@ -21,6 +21,7 @@
     "mongoose-unique-validator":"^3.0.0",
     "winston":"^3.3.3",
     "express-winston":"^4.2.0",
-    "password-validator":"^5.2.1"
+    "password-validator":"^5.2.1",
+    "crypto-js":"^4.1.1"
   }
 }
