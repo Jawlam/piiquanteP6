@@ -20,6 +20,7 @@
     "bcrypt":"^5.0.1",
     "mongoose-unique-validator":"^3.0.0",
     "winston":"^3.3.3",
-    "express-winston":"^4.2.0"
+    "express-winston":"^4.2.0",
+    "password-validator":"^5.2.1"
   }
 }
