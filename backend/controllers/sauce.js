@@ -1,25 +1,35 @@
 
+const res = require('express/lib/response');
 const fs = require('fs');
 const Sauce = require('../models/sauce');
+const sauceSchema = require('../validators/sauce');
 
-const trims = (...string) => {
-  return string.map((elt) => elt.trim());
+const trims = (obj) => {
+  Object.keys(obj).map((key, index) => {
+    const value = obj[key];
+    if(typeof value === 'string') {
+      obj[key] = obj[key].trim();
+    }
+  })
 }
 
 const checkInput = (input) => {
   const sauce = (typeof input === 'string') ? JSON.parse(input) : input;
-  const { name, manufacturer, description, mainPepper } = sauce;
-  const trimedTab = trims(name, manufacturer, description, mainPepper);
-  const hasThreeCharacters = (currentValue) => currentValue.length >= 3;
-  return trimedTab.every(hasThreeCharacters)
+  trims(sauce);
+  console.log(sauce);
+  if (sauceSchema.isValidSync(sauce, { strict: false })) {
+    return sauce;
+  }else{
+    return null;
+  }
 };
 
 exports.createSauce = (req, res, next) => {
   const input = req.body.sauce
-  if (!checkInput(input)) {
+  const sauceObject = checkInput(input);
+  if (sauceObject === null) {
     return res.status(400).json(new Error('Tous les champs doivent faire au moins 3 caractères'));
   } 
-  const sauceObject = JSON.parse(input);
   delete sauceObject._id;
   const sauce = new Sauce({
     ...sauceObject,
@@ -40,7 +50,8 @@ exports.createSauce = (req, res, next) => {
 
 exports.modifySauce = (req, res, next) => {
   const input = req.body.sauce || req.body
-  if (!checkInput(input)) {
+  const sauceObject = checkInput(input);
+  if (sauceObject === null) {
     return res.status(400).json(new Error('Tous les champs doivent faire au moins 3 caractères'));
   } 
   Sauce.findOne({ _id: req.params.id })
@@ -51,17 +62,22 @@ exports.modifySauce = (req, res, next) => {
         });
         return;
       }
-      const sauceObject = req.file
-        ? {
-            ...JSON.parse(input),
-            imageUrl: `${req.protocol}://${req.get('host')}/images/${
-              req.file.filename
-            }`,
-          }
-        : { ...req.body };
+      let sauceObject2 = sauceObject;
+      if (req.file) {
+        const filename = sauce.imageUrl.split('/images/')[1];
+        fs.unlink(`images/${filename}`, () => {
+          console.log('Ancienne image supprimer');
+        });
+        sauceObject2 = {
+          ...sauceObject,
+          imageUrl: `${req.protocol}://${req.get('host')}/images/${
+            req.file.filename
+          }`,
+        }
+      } 
       Sauce.updateOne(
         { _id: req.params.id },
-        { ...sauceObject, _id: req.params.id }
+        { ...sauceObject2, _id: req.params.id }
       )
         .then(() => res.status(200).json({ message: 'Sauce modifiée !' }))
         .catch((error) => res.status(400).json({ error }));

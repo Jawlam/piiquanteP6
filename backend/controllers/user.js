@@ -5,13 +5,18 @@ const cryptojs = require('crypto-js');
 
 require('dotenv').config();
 
+const passwordSchema = require('../validators/password')
 const User = require('../models/User');
 
 
 exports.signup = (req, res, next) => {
-  
-  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z0-9\d@$!%*?&]{8,}$/; 
   const password = req.body.password;
+  if (!passwordSchema.validate(password)) {
+    return res.status(400).json({
+      message:
+        'Le MDP doit faire 10 caractère au moins, avec une maj, une min et un chiffre au moins.',
+    });
+  }
   const cryptedEmail = cryptojs.HmacSHA256(req.body.email, process.env.EMAIL_SECRET).toString();
 
   bcrypt
