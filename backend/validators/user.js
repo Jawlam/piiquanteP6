@@ -1,3 +1,4 @@
+const { object, string, number, date, InferType } = require('yup');
 const passwordValidator = require('password-validator');
 
 const passwordSchema = new passwordValidator();
@@ -17,4 +18,10 @@ passwordSchema
   .not()
   .spaces(); // Ne doit pas avoir d'espaces
 
-module.exports = passwordSchema;
+const userSchema = object({  
+  email: string().email().required(),
+  password: string().test('is-password', value => passwordSchema.validate(value)).required(),
+  
+});
+
+module.exports = userSchema;

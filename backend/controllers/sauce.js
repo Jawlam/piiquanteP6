@@ -1,5 +1,4 @@
 
-const res = require('express/lib/response');
 const fs = require('fs');
 const Sauce = require('../models/sauce');
 const sauceSchema = require('../validators/sauce');
@@ -16,7 +15,6 @@ const trims = (obj) => {
 const checkInput = (input) => {
   const sauce = (typeof input === 'string') ? JSON.parse(input) : input;
   trims(sauce);
-  console.log(sauce);
   if (sauceSchema.isValidSync(sauce, { strict: false })) {
     return sauce;
   }else{
